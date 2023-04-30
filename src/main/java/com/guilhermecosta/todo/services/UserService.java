@@ -1,10 +1,14 @@
 package com.guilhermecosta.todo.services;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import com.guilhermecosta.todo.models.enums.ProfileEnum;
 import com.guilhermecosta.todo.services.exceptions.DataBindingViolationException;
 import com.guilhermecosta.todo.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.guilhermecosta.todo.models.User;
@@ -15,9 +19,12 @@ import jakarta.transaction.Transactional;
 @Service
 public class UserService {
 
+    //Para decodificar a senha do usuario
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
     // O service se comunica com os repositories, por isso
     // precisamos fazer as ligacoes
-
     @Autowired
     private UserRepository userRepository;
 
@@ -40,6 +47,8 @@ public class UserService {
     @Transactional
     public User createUser(User obj) {
         obj.setId(null); // Isso e para seguranca, caso um usuario mande um ID pera query, ele reseta ela
+        obj.setPassword(this.bCryptPasswordEncoder.encode(obj.getPassword())); //encripta a senha antes de salvar no BD
+        obj.setProfiles(Stream.of(ProfileEnum.USER.getCode()).collect(Collectors.toSet())); // Para definir o tipo de usuario em sua criacao
         obj = this.userRepository.save(obj);
 
         return obj;
@@ -49,6 +58,7 @@ public class UserService {
     public User updateUser(User obj) {
         User newObj = findById(obj.getId());
         newObj.setPassword(obj.getPassword());
+        newObj.setPassword(this.bCryptPasswordEncoder.encode(obj.getPassword())); //encripta a senha antes de salvar no BD
         return this.userRepository.save(newObj);
     }
 

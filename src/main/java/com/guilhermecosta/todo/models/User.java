@@ -1,10 +1,14 @@
 package com.guilhermecosta.todo.models;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.guilhermecosta.todo.models.enums.ProfileEnum;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -56,4 +60,19 @@ public class User {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     //Para quando buscar um usuario, nao vir SEMPRE todas as tasks, apenas se eu pedir isso
     private List<Task> tasks = new ArrayList<Task>();
+
+    //Para criar perfis de usuario: ADMIN e USER
+    @ElementCollection(fetch = FetchType.EAGER) // garante que sempre buscar o usuario, tras o seu perfil junto
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @CollectionTable(name = "user_profile")
+    @Column(name = "profile", nullable = false)
+    private Set<Integer> profiles = new HashSet<>(); //Set e basicamente uma List sem valores repetidos
+
+    public Set<ProfileEnum> getProfiles() {
+        return this.profiles.stream().map(ref -> ProfileEnum.toEnum(ref)).collect(Collectors.toSet());
+    }
+
+    public void addProfile(ProfileEnum profileEnum) {
+        this.profiles.add(profileEnum.getCode());
+    }
 }
