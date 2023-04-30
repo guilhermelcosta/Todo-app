@@ -2,6 +2,8 @@ package com.guilhermecosta.todo.services;
 
 import java.util.Optional;
 
+import com.guilhermecosta.todo.services.exceptions.DataBindingViolationException;
+import com.guilhermecosta.todo.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +32,7 @@ public class UserService {
         // a funcao .ElseThrow() joga um excecao caso isso aconteca. Alem disso,
         // em vez de usar new Exception, usar RunTimeException, pois a Exception padrao
         // para a execucao do programa, e a RunTimeExeception nao
-        return user.orElseThrow(() -> new RuntimeException("Usuario nao encontrado"));
+        return user.orElseThrow(() -> new ObjectNotFoundException("Usuario nao encontrado"));
     }
 
     // Usar o transactional sempre que for fazer uma manipulacao do BD: inserir e
@@ -59,7 +61,7 @@ public class UserService {
         try {
             this.userRepository.deleteById(id);
         } catch (Exception e) {
-            throw new RuntimeException("Nao e possivel excluir usuario pois ele possui entidades relacionadas");
+            throw new DataBindingViolationException("Nao e possivel excluir usuario pois ele possui entidades relacionadas");
         }
     }
 }

@@ -3,6 +3,8 @@ package com.guilhermecosta.todo.services;
 import java.util.List;
 import java.util.Optional;
 
+import com.guilhermecosta.todo.services.exceptions.DataBindingViolationException;
+import com.guilhermecosta.todo.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +31,7 @@ public class TaskService {
     public Task findById(Long id) {
         Optional<Task> task = this.taskRepository.findById(id);
 
-        return task.orElseThrow(() -> new RuntimeException("Tarefa nao encontrata"));
+        return task.orElseThrow(() -> new ObjectNotFoundException("Tarefa nao encontrada"));
     }
 
     public List<Task> findAllTasksByUserId(Long userId) {
@@ -63,7 +65,7 @@ public class TaskService {
         try {
             this.taskRepository.deleteById(id);
         } catch (Exception e) {
-            throw new RuntimeException("Nao e possivel excluir tarefa pois ela possui entidades relacionadas");
+            throw new DataBindingViolationException("Nao e possivel excluir tarefa pois ela possui entidades relacionadas");
         }
     }
 }
