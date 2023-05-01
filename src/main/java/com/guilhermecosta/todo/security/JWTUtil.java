@@ -30,7 +30,7 @@ public class JWTUtil {
         return key;
     }
 
-    public boolean isValiddToken(String token) {
+    public boolean isValidToken(String token) {
         Claims claims = getClaims(token);
         if (Objects.nonNull(claims)) {
             String userrname = claims.getSubject();
@@ -41,6 +41,13 @@ public class JWTUtil {
                 return true;
         }
         return false;
+    }
+
+    public String getUsername(String token) {
+        Claims claims = getClaims(token);
+        if (Objects.nonNull(claims))
+            return claims.getSubject();
+        return null;
     }
 
     private Claims getClaims(String token) {
