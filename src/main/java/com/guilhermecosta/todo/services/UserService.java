@@ -1,13 +1,17 @@
 package com.guilhermecosta.todo.services;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.guilhermecosta.todo.exceptions.AuthorizationException;
 import com.guilhermecosta.todo.models.enums.ProfileEnum;
+import com.guilhermecosta.todo.security.UserSpringSecurity;
 import com.guilhermecosta.todo.services.exceptions.DataBindingViolationException;
 import com.guilhermecosta.todo.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +33,10 @@ public class UserService {
     private UserRepository userRepository;
 
     public User findById(Long id) {
+        UserSpringSecurity userSpringSecurity =authenticated();
+        if (!Objects.nonNull(userSpringSecurity) || !userSpringSecurity.hasHole(ProfileEnum.ADMIN) && !id.equals(userSpringSecurity.getId()))
+            throw new AuthorizationException("Acesso negado");
+
         // O Optional faz com que, caso seja buscado um usuario que nao exista no BD
         // em vez do codigo dar erro, ele retorna vazio
 
@@ -72,6 +80,14 @@ public class UserService {
             this.userRepository.deleteById(id);
         } catch (Exception e) {
             throw new DataBindingViolationException("Nao e possivel excluir usuario pois ele possui entidades relacionadas");
+        }
+    }
+
+    public static UserSpringSecurity authenticated() {
+        try {
+            return (UserSpringSecurity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        } catch (Exception e) {
+            return null;
         }
     }
 }
