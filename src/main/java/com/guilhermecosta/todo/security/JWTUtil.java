@@ -26,8 +26,7 @@ public class JWTUtil {
 
     //Key para geracao do Token
     private SecretKey getKeyBySecret() {
-        SecretKey key = Keys.hmacShaKeyFor(this.secret.getBytes());
-        return key;
+        return Keys.hmacShaKeyFor(this.secret.getBytes());
     }
 
     public boolean isValidToken(String token) {

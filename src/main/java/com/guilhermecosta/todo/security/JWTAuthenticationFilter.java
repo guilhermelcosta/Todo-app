@@ -18,9 +18,9 @@ import java.util.ArrayList;
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
-    private JWTUtil jwtUtil;
+    private final JWTUtil jwtUtil;
 
     public JWTAuthenticationFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil) {
         setAuthenticationFailureHandler(new GlobalExceptionHandler());
@@ -37,8 +37,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                     userCredentials.getUsername(), userCredentials.getPassword(), new ArrayList<>());
 
-            Authentication authentication = this.authenticationManager.authenticate(authToken);
-            return authentication;
+            return this.authenticationManager.authenticate(authToken);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
