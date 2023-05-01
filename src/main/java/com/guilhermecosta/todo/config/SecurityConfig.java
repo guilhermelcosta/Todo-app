@@ -1,5 +1,6 @@
 package com.guilhermecosta.todo.config;
 
+import com.guilhermecosta.todo.security.JWTAuthenticationFilter;
 import com.guilhermecosta.todo.security.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -49,7 +50,10 @@ public class SecurityConfig {
         http.authorizeHttpRequests()
                 .requestMatchers(HttpMethod.POST).permitAll()
                 .requestMatchers(PUBLIC_MATCHERS).permitAll()
-                .anyRequest().authenticated();
+                .anyRequest().authenticated().and()
+                .authenticationManager(authenticationManager);
+
+        http.addFilter(new JWTAuthenticationFilter(this.authenticationManager, this.jwtUtil));
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
