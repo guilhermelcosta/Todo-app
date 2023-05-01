@@ -34,7 +34,7 @@ public class UserService {
 
     public User findById(Long id) {
         UserSpringSecurity userSpringSecurity =authenticated();
-        if (!Objects.nonNull(userSpringSecurity) || !userSpringSecurity.hasHole(ProfileEnum.ADMIN) && !id.equals(userSpringSecurity.getId()))
+        if (!Objects.nonNull(userSpringSecurity) || !userSpringSecurity.hasRole(ProfileEnum.ADMIN) && !id.equals(userSpringSecurity.getId()))
             throw new AuthorizationException("Acesso negado");
 
         // O Optional faz com que, caso seja buscado um usuario que nao exista no BD

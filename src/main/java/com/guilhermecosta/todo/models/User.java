@@ -48,6 +48,7 @@ public class User {
     @NotNull(groups = {CreateUser.class, UpdateUser.class})
     @NotEmpty(groups = {CreateUser.class, UpdateUser.class})
     @Size(groups = {CreateUser.class, UpdateUser.class}, min = 8, max = 50)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     // Como aqui estamos tratando de senha, e ela pode ser atualizada, precisamos
     // que essas verificacoes tambem sejam feitas quando o usuario for atualizar a
     // sua senha

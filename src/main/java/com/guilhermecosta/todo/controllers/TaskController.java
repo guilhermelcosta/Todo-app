@@ -28,14 +28,13 @@ public class TaskController {
     public ResponseEntity<Task> findById(@PathVariable Long id) {
         Task obj = this.taskService.findById(id);
 
-        return ResponseEntity.ok().body(obj);
+        return ResponseEntity.ok(obj);
     }
 
     //Busca todas as tasks relacionadas a um usuario
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Task>> findAllTasksByUserId(@PathVariable Long userId) {
-        userService.findById(userId); //cria mensagem de erro caso o usuario buscado nao exista
-        List<Task> obj = this.taskService.findAllTasksByUserId(userId);
+    @GetMapping("/user")
+    public ResponseEntity<List<Task>> findAllTasksByUser() {
+        List<Task> obj = this.taskService.findAllTasksByUser();
         return ResponseEntity.ok().body(obj);
     }
 
